@@ -1,9 +1,15 @@
 package edu.lanecc.tictactoe;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.preference.PreferenceManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -11,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class MainActivity extends AppCompatActivity
@@ -39,6 +46,33 @@ public class MainActivity extends AppCompatActivity
         playerXEditText.setOnEditorActionListener(this);
         endButton = findViewById(R.id.resetButton);
         endButton.setVisibility(View.INVISIBLE);
+    }
+    /************ Menu callback methods **************/
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        getMenuInflater().inflate(R.menu._main_activity, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        // Handle action bar item clicks here.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.menu_settings) {
+            startActivity(new Intent(
+                    getApplicationContext(), SettingsActivity.class));
+            return true;
+        }
+        else if (id == R.id.menu_about) {
+            Toast.makeText(this, "This game was written by Brian Bird", Toast.LENGTH_LONG).show();
+            return true;
+        }
+        else {
+            return super.onOptionsItemSelected(item);
+        }
     }
 
     /*************** Event handlers *************************/
