@@ -46,8 +46,11 @@ public class MainActivity extends AppCompatActivity
         playerXEditText.setOnEditorActionListener(this);
         endButton = findViewById(R.id.resetButton);
         endButton.setVisibility(View.INVISIBLE);
+
     }
     /************ Menu callback methods **************/
+    // TODO must get settings options for preferences!
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
@@ -67,7 +70,7 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
         else if (id == R.id.menu_about) {
-            Toast.makeText(this, "This game was written by Brian Bird", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "This little app was edited by Amy Lese for Android Lab 3", Toast.LENGTH_LONG).show();
             return true;
         }
         else {
