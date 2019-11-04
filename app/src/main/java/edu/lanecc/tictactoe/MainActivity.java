@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.res.Configuration;
 import android.preference.PreferenceManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -33,12 +34,29 @@ public class MainActivity extends AppCompatActivity
     // Game logic object
     TicTacToeLogic game = new TicTacToeLogic();
 
+    // Player names
+    String playerNameO = "";
+    String playerNameX = "";
+
+    /********* Preference variables ********/
+    private SharedPreferences prefs;
+    private boolean darkMode = false;
+    private boolean largeText = false;
+    private boolean rememberNames = true;
+
+    // Dark Mode Field
+    public static final String DARK_MODE = "DARK_MODE";
+    // Large Text Field
+    public static final String LARGE_TEXT = "LARGE_TEXT";
+
+
 
     /************ Life-cycle callback methods **************/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
         playerOEditText = findViewById(R.id.playerOEditText);
         playerOEditText.setOnEditorActionListener(this);
@@ -46,6 +64,48 @@ public class MainActivity extends AppCompatActivity
         playerXEditText.setOnEditorActionListener(this);
         endButton = findViewById(R.id.resetButton);
         endButton.setVisibility(View.INVISIBLE);
+
+        // Set default preferences
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+        // Get default preferences
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        prefs.getBoolean(DARK_MODE, false);
+
+    }
+
+    @Override
+    protected void onPause() {
+        // save the EditText player names
+        Editor editor = prefs.edit();
+        editor.putString("playerNameO", playerNameO);
+        editor.putString("playerNameX", playerNameX);
+        editor.apply();
+
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // get preferences
+        rememberNames = prefs.getBoolean("pref_remember_names", true);
+
+
+        // get the instance variables
+        if (rememberNames) {
+            playerNameO = prefs.getString("playerNameO", "");
+            playerNameX = prefs.getString("playerNameX", "");
+        }
+        else {
+            playerNameO = "";
+            playerNameX = "";
+        }
+
+        // set the names on their widgets
+        playerOEditText.setText(playerNameO);
+        playerXEditText.setText(playerNameX);
 
     }
     /************ Menu callback methods **************/
@@ -93,19 +153,19 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-        String playerName = "";
+
         if(i == EditorInfo.IME_ACTION_DONE ||
                 i == EditorInfo.IME_ACTION_UNSPECIFIED ||
                 i == EditorInfo.IME_ACTION_NEXT ||
                 keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
 
-            playerName = playerOEditText.getText().toString();
-            if (playerName != "")
-                game.setPlayerOName(playerName);
+            playerNameO = playerOEditText.getText().toString();
+            if (playerNameO != "")
+                game.setPlayerOName(playerNameO);
 
-            playerName = playerXEditText.getText().toString();
-            if (playerName != "")
-                game.setPlayerXName(playerName);
+            playerNameX = playerXEditText.getText().toString();
+            if (playerNameX != "")
+                game.setPlayerXName(playerNameX);
         }
 
         // Hide the soft keyboard
@@ -113,6 +173,16 @@ public class MainActivity extends AppCompatActivity
         imm.hideSoftInputFromWindow(textView.getWindowToken(), 0);
 
         return false;
+    }
+    // Method to detect dark mode
+    public boolean isDarkMode()
+    {
+        return darkMode;
+    }
+    // Method to detect large text
+    public boolean isLargeText()
+    {
+        return largeText;
     }
 
     //This method to trigger the image appear when palyer click the box
